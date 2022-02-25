@@ -1,0 +1,30 @@
+# PASO
+
+LAT -22.53444
+LON -45.5825
+height 1864
+
+
+# values in same unit! if aproximating, just put pixel_size = 1 and estimate focal_length
+focal_length  194
+pixel_size  1
+mapping  equidistant
+
+zenith_X 330
+zenith_Y 240
+phase 33
+
+max_sigma 1
+min_sigma 0.5
+num_sigma 3
+threshold .0125
+
+max_magnitude 5
+min_altitude 10
+
+width  640
+height  480
+
+l 5
+square 20
+min 6

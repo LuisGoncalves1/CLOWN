@@ -1,4 +1,4 @@
-# PASO
+# Telescope positioning (Latitude, longitude and height)
 
 LAT -22.53444
 LON -45.5825
@@ -10,21 +10,33 @@ focal_length  194
 pixel_size  1
 mapping  equidistant
 
+
+# Values obtained for the calibrator for the zenith position and phase
 zenith_X 330
 zenith_Y 240
 phase 33
 
+
+# Parameters for the blob_log method, (num_sigma is an int value)
 max_sigma 1
 min_sigma 0.5
 num_sigma 3
 threshold .0125
 
+
+# Parameters to define what stars are used from the catalogue, only ones with lower magnitudes and at bigger altitudes are checked, (min_altitude and precision in degrees)
 max_magnitude 5
 min_altitude 10
+precision 1.5
 
+
+# image size for the calibration process, where it doesn't open the image
 width  640
 height  480
 
-l 5
-square 20
-min 6
+# values for the final correction process
+l 5 # size of small squares (int)
+square 11 # size of square for correction process (int)
+min  150 # threshold value for this process
+
+GRAPH True

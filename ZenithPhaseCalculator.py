@@ -1,12 +1,11 @@
 import cv2
 import matplotlib.pyplot as plt
-from Funcoes.MudancaCoordenadas import PixelParaAltaz, AltazParaPixel
-from Funcoes.Reader import ReadFile
-from astropy.coordinates import EarthLocation
+from Functions.CoordinateChange import PixelToAltaz, AltazToPixel
+from Functions.Reader import ReadFile, ReadConfig
+from astropy.coordinates import EarthLocation, SkyCoord
 import astropy.units as u
 from astropy.time import Time
 import numpy as np
-from astropy.coordinates import SkyCoord
 import time
 
 
@@ -14,7 +13,7 @@ import time
 # In this example we used :Sirius,Altinak,Alnilam,Mintaka,Rigel,Hadar,Rigil Kentaurus,Spica,Algorab,Gienah,y Hya, Kraz, Minkar
 
 config_file = 'Config.txt'
-image = 'ImagemA000.jpg' 
+image = 'Images/2021-03-31T23:46:18.000.jpg' 
 
 
 X =np.array([432,463.5,466.5,468.5,495,333,335,165,206,216.5,205,223.5,233])
@@ -29,7 +28,7 @@ Alt = np.array([52.88247,32.75428,31.40958,30.06936,29.2325,28.90678,24.52286,30
 
 
 #------------------------------------------------------------------------------
-information = ReadFile(config_file)
+information = ReadConfig(config_file)
 
 
 location=EarthLocation(
@@ -72,7 +71,7 @@ for a in range(0,l):
 
 Erros = []
 for zenith in tentativas:
-	Calculados = PixelParaAltaz(X,Y,zenith,location,timestamp,rotacao,mapping,focal,pixel_size)
+	Calculados = PixelToAltaz(X,Y,zenith,location,timestamp,rotacao,mapping,focal,pixel_size)
 	erro = np.sum(np.absolute(Alt-Calculados.alt.value))
 	Erros.append(erro)
 
@@ -84,7 +83,7 @@ print('zenith: ',zenith)
 Erros = []
 for i in range(361):
 	rotacao = i
-	Calculados = PixelParaAltaz(X,Y,zenith,location,timestamp,rotacao,mapping,focal,pixel_size)
+	Calculados = PixelToAltaz(X,Y,zenith,location,timestamp,rotacao,mapping,focal,pixel_size)
 	erro = np.sum(np.absolute(Az-Calculados.az.value))
 	Erros.append(erro)
 
@@ -93,7 +92,7 @@ rotacao = Erros.index(min(Erros))
 print('phase: ',rotacao)
 
 
-X1,Y1 =  AltazParaPixel(coord,zenith,rotacao,mapping,focal,pixel_size)
+X1,Y1 =  AltazToPixel(coord,zenith,rotacao,mapping,focal,pixel_size)
 
 
 

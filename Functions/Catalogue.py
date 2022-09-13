@@ -1,4 +1,4 @@
-from astropy.coordinates import SkyCoord, AltAz#, get_body
+from astropy.coordinates import SkyCoord, AltAz
 import numpy as np
 from astropy.table import Table
 from pkg_resources import resource_filename

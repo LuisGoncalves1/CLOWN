@@ -2,52 +2,53 @@
 # VERY CAREFUL!!! The timestamp must be in UTC timezone, so if you live in another timezone you should correct that value with the UTC option.
 
 
-ImageFolder OPD				#Name of folders
+ImageFolder PASO				#Name of folders
 catalogue hipparcos.fits.gz			#Path to catalogue
 
 # Telescope positioning (Latitude, longitude and height) You can get these values at google maps easily if you don't already have them.
 
-LAT -22.53444
-LON -45.5825
-height 1864
-UTC -3
+LAT 40.182524
+LON -7.873811
+height 820
+UTC 1
 
 # image size for the calibration process, where it doesn't open the image
-width  640
-height  480
-reverse False
+width  1392
+height  1040
+reverse  False
 
 # Values obtained for the calibrator for the zenith position and phase. Run the ZenithPhaseCalculator.py to obtain these values.
-zenith_X 330
-zenith_Y 236
-phase 33
+zenith_X 677
+zenith_Y 550
+phase 145
 
 # values in same unit! These values can be found in the camera datasheet or by contacting the supplier.
 #if aproximating, just use equidistant mapping, use pixel_size = 1 and estimate the focal_length with trial and error. 
-focal_length  194
-pixel_size  1
+focal_length  1.55
+pixel_size  0.00465
 mapping  equidistant
 
-Mask Mascara.jpg
+Mask MascaraPASO.jpeg
 
 # Parameters for the blob_log method, (num_sigma is an int value). You can test these 
 max_sigma 1
 min_sigma 0.5
 num_sigma 3
-threshold .0125
+threshold .013
 
 
 # Parameters to define what stars are used from the catalogue, only ones with lower magnitudes and at bigger altitudes are checked, (min_altitude and precision in degrees)
-max_magnitude 5.8
+max_magnitude 5.5
 min_altitude 20
 precision 1.5
 
 
 # values for the final correction process
-l 9 # size of small squares (int)
-square 18 # size of square for correction process (int)
-AnalysisThreshold  90 # threshold value for this process in number of white pixels
+l 25 # size of small squares (int)
+square 42 # size of square for correction process (int)
+AnalysisThreshold  700 # threshold value for this process in number of white pixels
+
 
 
 # If True, the program will produce a graph with: 1) Catalogue stars, 2) Found stars and 3) Cloud mask. If you are running a lot of images, you may not want to see them all.
-GRAPH True
+GRAPH False

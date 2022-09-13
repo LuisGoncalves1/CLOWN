@@ -17,37 +17,26 @@ from astropy.io import fits
 from astropy.time import Time
 import dateutil.parser
 
+def rgb2gray(rgb):
+    dado = np.dot(rgb[...,:3], [0.2989, 0.5871, 0.1140])
+    dado = dado.astype(int)
+    return dado
 
-def CircularMask(ficheiro,raio):
-	#Recebe a diretoria do ficheiro, devolve imagem com mask aberta
-	imagem=cv2.imread(ficheiro)
-	height, width, layers = imagem.shape
-	Centrox=height/2
-	Centroy=width/2
-
-	for y in range(0,height):
-		for x in range(0,width):
-			if math.sqrt((x-Centrox)**2 + (y-Centroy)**2) > raio:
-				imagem[y][x]=[0,0,0]
+def MaskApplier(X,Y,R,mascara):	
+	binary = []
+	for i in range(len(X)):
+		if mascara[int(Y[i])][int(X[i])] == 255:
+			binary.append(True)
+		else:
+			binary.append(False)
+		
+	X = X[binary]
+	Y = Y[binary]
+	R = R[binary]
 	
-	return imagem
+	return X,Y,R
 	
-def CircularMask2(imagem,raio,valor):
-	#Recebe a diretoria do ficheiro, devolve imagem com mask aberta
-	Shape = imagem.shape
-	Centrox=Shape[1]/2
-	Centroy=Shape[0]/2
-
-
-	for y in range(0,Shape[0]):
-		for x in range(0,Shape[1]):
-			if math.sqrt((x-Centrox)**2 + (y-Centroy)**2) > raio:
-				imagem[y][x]=valor
 	
-	return imagem
-
-def MaskApplier(imagem,Mask):
-	mascara = cv2.imread(Mask)
 	height, width = imagem.shape
 	for y in range(0,height):
 		for x in range(0,width):
@@ -74,20 +63,6 @@ def VideoMaker(PastaInicio,PastaFim,fps,tempo):
 		out.write(frame_array[i])
 	out.release()
 	
-def AnalisarImagemAstrometry(filename):
-	s=Session(api_key='etpmwcwjttlotpeo')
-	upl=FileUpload(filename,session=s)
-	submission=upl.submit()
-	submission.until_done()
-	job=submission.jobs[0]
-	job.until_done()
-	
-	if job.success():
-		imagem = job.annotated_display()
-		return imagem
-	else:
-		return None
-
 def StarFinder(image,max_sigma=1,num_sigma=10,threshold=.03,exclude_border=True,min_sigma=0):
 	blobs = blob_log(image, max_sigma=max_sigma, num_sigma=num_sigma, threshold=threshold,exclude_border=exclude_border)
 	blobs[:, 2] = blobs[:, 2] * sqrt(2)	
@@ -101,7 +76,7 @@ def find_matching_stars(catalog_stars, image_stars, max_sep=0.5 * u.deg):
     mask = d2d < max_sep
 
     return idx[mask], mask
-
+    
 def read(path):
 	name, ext = os.path.splitext(path)
 	print(ext)
@@ -125,6 +100,22 @@ def read(path):
 	img[img < 0.0] = 0.0
 	img /= 2**16
 	return img , timestamp
+		
+def FirstAnalysis(shape,l,X,Y):
+	Image = np.zeros(shape)	
+	for i in range(len(X)):
+		Image[int(Y[i]-l/2):int(Y[i]+l/2),int(X[i]-l/2):int(X[i]+l/2)] = 255
+	
+	return Image
+		
+def SecondAnalysis(Image,square,threshold):
+	ImageCorrected = np.zeros(Image.shape)
+	for i in range(Image.shape[0]):
+		for j in range(Image.shape[1]):
+			if np.sum(Image[int(i-square/2):int(i+square/2),int(j-square/2):int(j+square/2)] ) > threshold:
+						ImageCorrected[i][j] = 255
+	
+	return ImageCorrected
        
 
 

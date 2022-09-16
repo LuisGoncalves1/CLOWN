@@ -7,6 +7,8 @@ To run, first create a config file, with the parameters according to the locatio
 
 To obtain the phase difference and the zenith position, choose an image and simulate it with Stellarium. Then save the (x,y) coordinates from the iamge and the (Alt,Az) from Stellarium and run "ZenithPhaseCalculator.py" to calibrate the pictures, using a selected image.
 
+python3 ZenithPhaseCalculator.py ConfigPASO.txt AltAzPaso XYPaso 40
+
 With Configuration ready, create a folder both in Images and Cloud Masks with the chosen name. Place your images in Image folder and then run CLOWN.py. It can be run from the terminal with:
 
 python3 CLOWN.py Config.txt

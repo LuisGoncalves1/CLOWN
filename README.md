@@ -15,4 +15,4 @@ python3 CLOWN.py Config.txt
 
 
 
-If you use this code in your work, please cite our paper in IAF.
+If you use this code in your work, please cite our paper in Astronomical Journal : CLOWN: Automatic cloud detection service with All-Sky images for optical telescope space-debris surveys in PASO. (link)

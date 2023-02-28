@@ -6,6 +6,7 @@ from functools import lru_cache
 
 # ~ catalog_path = resource_filename('all_sky_cloud_detection', 'resources/hipparcos.fits.gz')
 
+# Reads catalogue file
 @lru_cache(maxsize=10)
 def ReadCatalogue(catalog_path,max_magnitude=None,min_magnitude=None,max_variability=None):
     catalog = Table.read(catalog_path)
@@ -23,6 +24,7 @@ def ReadCatalogue(catalog_path,max_magnitude=None,min_magnitude=None,max_variabi
 
     return catalog
 
+# Transforms Ra and Dec coordinates into Alt/Az
 def Convert_Catalogue(catalog, time, location, min_altitude=20):
 
     stars = SkyCoord(ra=catalog['ra'], dec=catalog['dec'], frame='icrs')

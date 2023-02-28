@@ -4,6 +4,7 @@
 
 ImageFolder PASO				#Name of folders
 catalogue hipparcos.fits.gz			#Path to catalogue
+GRAPH	True
 
 # Telescope positioning (Latitude, longitude and height) You can get these values at google maps easily if you don't already have them.
 
@@ -49,6 +50,18 @@ square 42 # size of square for correction process (int)
 AnalysisThreshold  700 # threshold value for this process in number of white pixels
 
 
+# values for CheckPoint
+RaDelta 10
+DecDelta 10
+
+
 
 # If True, the program will produce a graph with: 1) Catalogue stars, 2) Found stars and 3) Cloud mask. If you are running a lot of images, you may not want to see them all.
-GRAPH False
+GRAPH True
+
+
+
+
+
+
+

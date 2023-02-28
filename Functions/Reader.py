@@ -1,7 +1,8 @@
 from astropy.io import fits
 import cv2
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
+import numpy as np
+
 
 def ReadConfig(config):
 	dic = {}
@@ -47,4 +48,18 @@ def ReadFile(Directory,image,UTC):
 	return Image,timestamp
 
 
-
+def ReadCoordinates(File):
+	A = []
+	B = []
+	with open(File,'r') as texto:
+		while True:
+			linha = texto.readline()
+			if len(linha)!= 0 and linha[0] != '#' and linha[0]!= '\n':
+				C = linha.strip().split(',')
+				A.append(float(C[0]))
+				B.append(float(C[1]))
+				
+			if linha == "":
+				break
+			
+	return np.array(A),np.array(B)

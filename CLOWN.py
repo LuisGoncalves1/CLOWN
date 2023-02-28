@@ -56,13 +56,17 @@ Mask = information['Mask']
 l = int(information['l'])
 square = int(information['square'])
 AnalysisThreshold = information['AnalysisThreshold']*255
+UTC = information['UTC']
 
 mascara = rgb2gray(cv2.imread(Mask))
 catalogue = ReadCatalogue(information['catalogue'],max_magnitude = max_magnitude)		
+counter = 0
 if len(Images) > 1:
 	for image in Images:
-		Image,timestamp = ReadFile(ImageFolder,image,information['UTC'])												  # Reads the image
-		print('Working on ' + image)
+		counter += 1
+		Image,timestamp = ReadFile(ImageFolder,image,UTC)												  # Reads the image
+		text = "Working on %s/  Progress:%s/%s" %(image,str(counter),str(len(Images)))
+		print(text)
 		catalog_stars, magnitude = Convert_Catalogue(catalogue, timestamp, location, min_altitude=min_altitude)  		  # selects only the stars visible in that location at that timestamp
 		Y, X, R = StarFinder(Image,max_sigma=max_sigma,min_sigma=min_sigma,num_sigma=num_sigma,threshold=threshold)       # Finds the objects in the image
 		if Mask != 'None':
@@ -77,7 +81,8 @@ if len(Images) > 1:
 		Image3 = SecondAnalysis(Image2,square,AnalysisThreshold)
 		if Mask != 'None':
 			Image3 = np.maximum(Image3,~mascara+256)
-		cv2.imwrite('Cloud Masks/' + information['ImageFolder'] + '/' + image, Image3)
+		print(Image3)
+		cv2.imwrite('CloudMasks/' + information['ImageFolder'] + '/' + image, Image3)
 		
 					
 		if information['GRAPH']:

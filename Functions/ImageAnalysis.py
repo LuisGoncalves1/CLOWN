@@ -117,9 +117,5 @@ def SecondAnalysis(Image,square,threshold):
 	
 	return ImageCorrected
        
-
-
-
-
-
+# ~ def CheckCloud(Mask,Pixels):
 	

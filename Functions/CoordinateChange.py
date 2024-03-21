@@ -19,9 +19,10 @@ def PixelToPolar(X, Y,zenith,reverse):
 	return r, phi * u.rad  # angulo em radianos, distancia em pixeis
 
 def PolarToPixel(r,phi,zenith,reverse):
-	X = zenith[0] + r * np.sin(-phi)
 	if reverse:
 		X = zenith[0] - r * np.sin(-phi)
+	else:
+		X = zenith[0] + r * np.sin(-phi)
 		
 	Y = zenith[1] - r * np.cos(-phi)	
 	return X,Y

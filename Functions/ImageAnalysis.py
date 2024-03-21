@@ -22,6 +22,19 @@ def rgb2gray(rgb):
     dado = dado.astype(int)
     return dado
 
+def DrawSquare(Image,X,Y,l):
+	Image[int(Y-l/2):int(Y+l/2),int(X-l/2):int(X+l/2)] = 255
+	return Image
+
+def DrawCircle(Image,X,Y,l,shape):
+	y, x = np.ogrid[:shape[0], :shape[1]]
+	distance = np.sqrt((x - X)**2 + (y - Y)**2)
+	mask = distance <= l/2
+
+	Image[mask] = 255
+	return Image
+
+
 def MaskApplier(X,Y,R,mascara):	
 	binary = []
 	for i in range(len(X)):
@@ -75,7 +88,7 @@ def find_matching_stars(catalog_stars, image_stars, max_sep=0.5 * u.deg):
     idx, d2d, d3d = match_coordinates_sky(catalog_stars, image_stars)
     mask = d2d < max_sep
 
-    return idx[mask], mask
+    return idx, mask
     
 def read(path):
 	name, ext = os.path.splitext(path)
@@ -104,7 +117,9 @@ def read(path):
 def FirstAnalysis(shape,l,X,Y):
 	Image = np.zeros(shape)	
 	for i in range(len(X)):
-		Image[int(Y[i]-l/2):int(Y[i]+l/2),int(X[i]-l/2):int(X[i]+l/2)] = 255
+		Image = DrawCircle(Image,X[i],Y[i],l,shape)
+		# Image = DrawSquare(Image,X[i],Y[i],l)
+
 	
 	return Image
 		
@@ -116,6 +131,4 @@ def SecondAnalysis(Image,square,threshold):
 						ImageCorrected[i][j] = 255
 	
 	return ImageCorrected
-       
-# ~ def CheckCloud(Mask,Pixels):
-	
+       	

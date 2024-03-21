@@ -18,9 +18,24 @@ import os
 import sys
 
 
-config_file = sys.argv[1]
-# ~ config_file = 'ConfigPASO.txt'
+'''
+Examples:
+To run code type in CLOWN.py directory: python CLOWN.py configFile InputImage OutputImage
 
+Example: python3 CLOWN.py ConfigPASO.txt
+'''
+
+
+
+
+
+
+
+
+
+config_file = sys.argv[1]
+InputImage = sys.argv[2]
+OutputImage = sys.argv[2]
 
 
 
@@ -51,57 +66,49 @@ mapping = information['mapping']
 precision = float(information['precision'])
 reverse = information['reverse']
 ImageFolder = 'Images/' + information['ImageFolder'] + '/'
-Images = os.listdir(ImageFolder)
 Mask = information['Mask']
 l = int(information['l'])
 square = int(information['square'])
 AnalysisThreshold = information['AnalysisThreshold']*255
 UTC = information['UTC']
+FileNameFormat = information['FileNameFormat']
+
 
 mascara = rgb2gray(cv2.imread(Mask))
 catalogue = ReadCatalogue(information['catalogue'],max_magnitude = max_magnitude)		
-counter = 0
-if len(Images) > 1:
-	for image in Images:
-		counter += 1
-		Image,timestamp = ReadFile(ImageFolder,image,UTC)												  # Reads the image
-		text = "Working on %s/  Progress:%s/%s" %(image,str(counter),str(len(Images)))
-		print(text)
-		catalog_stars, magnitude = Convert_Catalogue(catalogue, timestamp, location, min_altitude=min_altitude)  		  # selects only the stars visible in that location at that timestamp
-		Y, X, R = StarFinder(Image,max_sigma=max_sigma,min_sigma=min_sigma,num_sigma=num_sigma,threshold=threshold)       # Finds the objects in the image
-		if Mask != 'None':
-			X, Y, R = MaskApplier(X,Y,R,mascara)
-		coord = PixelToAltaz(X,Y,zenith,location,timestamp,phase,mapping,focal,pixel_size,reverse = reverse)			  # Transforms the pixel coordinates to Altitude/Azimute
-		mask = coord.alt.deg > min_altitude 																			  # Removes stars with a lower altitude than the minimum chosen
-		idx,found = find_matching_stars(catalog_stars, coord[mask], max_sep=precision * u.deg)							  # Matches the stars
-		X2,Y2 = AltazToPixel(catalog_stars,zenith,phase,mapping,focal,pixel_size, reverse = reverse) 			  		  # Catalogue Stars
-		X4,Y4 = X2[~found],Y2[~found]																					  # Missing Stars
-		
-		Image2 = FirstAnalysis(Image.shape[0:2],l,X4,Y4)
-		Image3 = SecondAnalysis(Image2,square,AnalysisThreshold)
-		if Mask != 'None':
-			Image3 = np.maximum(Image3,~mascara+256)
-		print(Image3)
-		cv2.imwrite('CloudMasks/' + information['ImageFolder'] + '/' + image, Image3)
+Image,timestamp = ReadFile(InputImage,UTC,FileNameFormat)												  		  # Reads the image
+catalog_stars, magnitude = Convert_Catalogue(catalogue, timestamp, location, min_altitude=min_altitude)  		  # selects only the stars visible in that location at that timestamp
+Y, X, R = StarFinder(Image,max_sigma=max_sigma,min_sigma=min_sigma,num_sigma=num_sigma,threshold=threshold)       # Finds the objects in the image
+if Mask != 'None':
+	X, Y, R = MaskApplier(X,Y,R,mascara)
+coord = PixelToAltaz(X,Y,zenith,location,timestamp,phase,mapping,focal,pixel_size,reverse = reverse)			  # Transforms the pixel coordinates to Altitude/Azimute
+mask = coord.alt.deg > min_altitude 																			  # Removes stars with a lower altitude than the minimum chosen
+idx,found = find_matching_stars(catalog_stars, coord[mask], max_sep=precision * u.deg)							  # Matches the stars
+X2,Y2 = AltazToPixel(catalog_stars,zenith,phase,mapping,focal,pixel_size, reverse = reverse) 			  		  # Catalogue Stars																			  # Missing Stars
+	
+Image2 = FirstAnalysis(Image.shape[0:2],l,X2[~found],Y2[~found])
+Image3 = SecondAnalysis(Image2,square,AnalysisThreshold)
+if Mask != 'None':
+	Image3 = np.maximum(Image3,~mascara+256)
+
+cv2.imwrite(OutputImage, Image3)
 		
 					
-		if information['GRAPH']:
-			vmin = None
-			vmax = None
-			fig,axes = plt.subplots(1,4)
-			ax = axes.ravel()
-			ax[0].imshow(Image,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
-			ax[1].imshow(Image,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
-			for contador in range(len(Y)):
-					c1 = plt.Circle((X[contador],Y[contador]),0.4, color = 'green', linewidth=2,fill=False)
-					ax[1].add_patch(c1)
-					
-			for contador in range(len(Y2)):
-					c1 = plt.Circle((X2[contador],Y2[contador]),0.4, color = 'red', linewidth=2,fill=False)
-					ax[1].add_patch(c1)
-			
-			ax[2].imshow(Image2,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
-			ax[3].imshow(Image3,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
-			# ~ ax[4].imshow(Image4,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
-			plt.show()
-			
+if information['GRAPH']:
+	vmin = None
+	vmax = None
+	fig,axes = plt.subplots(1,4)
+	ax = axes.ravel()
+	ax[0].imshow(Image,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
+	ax[1].imshow(Image,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
+	for contador in range(len(Y)):
+			c1 = plt.Circle((X[contador],Y[contador]),0.4, color = 'green', linewidth=2,fill=False)
+			ax[1].add_patch(c1)
+		
+	for contador in range(len(Y2)):
+			c1 = plt.Circle((X2[contador],Y2[contador]),0.4, color = 'red', linewidth=2,fill=False)
+			ax[1].add_patch(c1)
+	
+	ax[2].imshow(Image2,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
+	ax[3].imshow(Image3,cmap='gray',vmin=vmin or np.nanpercentile(Image, 0.1),vmax=vmax or np.nanpercentile(Image, 99))
+	plt.show()

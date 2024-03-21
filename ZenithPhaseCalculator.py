@@ -11,6 +11,19 @@ from astropy.io import fits
 
 import sys
 
+'''
+Examples:
+To run code type in ZenithPhaseCalculator.py directory: python ZenithPhaseCalculator.py configFile AltAzFile XyFile L
+
+Example: python3 ZenithPhaseCalculator.py ConfigPASO.txt AltAzPaso XYPaso 40
+'''
+
+
+
+
+
+
+
 config_file = sys.argv[1]
 AltAzFile = sys.argv[2]
 XYFile = sys.argv[3]
@@ -95,24 +108,20 @@ Az1 = Calculados.az.value
 
 
 
+if information['GRAPH']:
+	image = sys.argv[5]
+	print(image)
+	Imagem = cv2.imread(image)
+	fig,axes = plt.subplots()
+	vmin = None
+	vmax = None	
+	axes.imshow(Imagem,cmap='gray',vmin=vmin or np.nanpercentile(Imagem, 0.1),vmax=vmax or np.nanpercentile(Imagem, 99))
+	for contador in range(len(Y1)):
+		c1 = plt.Circle((X1[contador],Y1[contador]),0.2, color = 'yellow', linewidth=2,fill=False)
+		axes.add_patch(c1)
 
-# ~ Imagem = cv2.imread(image)
-# ~ fig,axes = plt.subplots()
-# ~ vmin = None
-# ~ vmax = None
-# ~ if test == 'PASO':
-	# ~ A = fits.open(image)
-	# ~ Imagem = A[0].data	
-	# ~ axes.imshow(Imagem,cmap='gray',vmin=vmin or np.nanpercentile(Imagem, 0.1),vmax=vmax or np.nanpercentile(Imagem, 99))
-# ~ elif test == 'LNA':
-	# ~ Imagem = cv2.imread(image)
-	# ~ axes.imshow(Imagem)
-# ~ for contador in range(len(Y1)):
-	# ~ c1 = plt.Circle((X1[contador],Y1[contador]),0.2, color = 'yellow', linewidth=2,fill=False)
-	# ~ axes.add_patch(c1)
+	c1 = plt.Circle((zenith[0],zenith[1]),2, color = 'yellow', linewidth=2,fill=False)
+	axes.add_patch(c1)
 
-# ~ c1 = plt.Circle((zenith[0],zenith[1]),2, color = 'yellow', linewidth=2,fill=False)
-# ~ axes.add_patch(c1)
-
-# ~ plt.show()
+	plt.show()
 
